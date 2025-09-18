@@ -1,148 +1,382 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDG Games — Demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Spin Game — Demo (Owner: Himanshu Yadav)</title>
   <style>
     :root{
-      --bg:#0b0f1a; --card:#0f1724; --accent:#00e6a8; --muted:#94a3b8;
+      --bg:#071124; --card:#0f1724; --accent:#00e6a8; --muted:#94a3b8; --glass:rgba(255,255,255,0.03);
       font-family: Inter, system-ui, Arial, sans-serif;
     }
-    body{margin:0;background:linear-gradient(180deg,#061024 0%, #0b0f1a 100%);color:#e6eef8}
-    header{padding:24px 28px;display:flex;align-items:center;justify-content:space-between}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#04101a 0%,#071124 100%);color:#e6eef8}
+    .wrap{max-width:1100px;margin:18px auto;padding:16px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
     .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#0ff,#06f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042}
-    nav a{color:var(--muted);margin-left:18px;text-decoration:none;font-weight:600}
-    .hero{padding:28px;display:flex;gap:24px;align-items:center}
-    .hero-left{flex:1}
-    .hero h1{font-size:32px;margin:0 0 10px}
-    .hero p{color:var(--muted);margin:0 0 16px}
-    .btn{background:var(--accent);color:#021; padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:22px;}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    .card h3{margin:0 0 8px}
-    .footer{padding:16px;color:var(--muted);text-align:center}
-    .topbar{display:flex;gap:12px;align-items:center}
-    .credits-badge{background:#071827;padding:8px 12px;border-radius:999px;color:var(--accent);font-weight:700}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff7b7b);display:flex;align-items:center;justify-content:center;font-weight:900;color:#032;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+    h1{font-size:20px;margin:0;color:var(--accent)}
     .small{font-size:13px;color:var(--muted)}
-    .play-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--accent);cursor:pointer}
+    .topbar{display:flex;gap:10px;align-items:center}
+    .credits{background:#071827;padding:10px 14px;border-radius:999px;color:var(--accent);font-weight:800}
+    .btn{background:var(--accent);color:#021;padding:9px 14px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:var(--accent);cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    .wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .pointer{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:18px solid var(--accent);margin-bottom:-8px}
+    .wheel{width:280px;height:280px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 12px 30px rgba(2,6,23,0.6);transition:transform 4s cubic-bezier(.17,.67,.5,1)}
+    .wheel{background:conic-gradient(#ffd77a 0 18%, #ff8b8b 18% 36%, #9be6ff 36% 54%, #d6b3ff 54% 72%, #bfffe0 72% 90%, #ffddc4 90% 100%);}
+    .wheel .center{width:88px;height:88px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:900}
+    .controls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .muted{color:var(--muted);font-size:13px;margin-top:8px}
+    .history-list{max-height:220px;overflow:auto;padding-right:6px;margin-top:8px}
+    .row{display:flex;justify-content:space-between;align-items:center}
+    .leaderboard{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .input{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+    .owner-badge{background:linear-gradient(90deg,#ffb347,#ffcc33);color:#042;padding:8px 12px;border-radius:999px;font-weight:800}
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">BDG</div>
-      <div>
-        <div style="font-weight:800">BDG Games</div>
-        <div class="small">Demo portal • Virtual credits only</div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">YG</div>
+        <div>
+          <h1>Spin Game — Demo (Virtual ₹)</h1>
+          <div class="small">Virtual balance only — no real money.</div>
+        </div>
       </div>
-    </div>
-    <div class="topbar">
-      <div class="credits-badge">Credits: <span id="credits">0</span></div>
-      <button class="btn" id="buyBtn">Buy Credits</button>
-    </div>
-  </header>
 
-  <section class="hero">
-    <div class="hero-left">
-      <h1>Spin & Win — Demo</h1>
-      <p class="small">Yeh demo site sirf virtual credits ke liye hai. Real money se judi functionality ke liye legal licence aur payment integration zaroori hai.</p>
-      <div style="margin-top:14px">
-        <button class="btn" onclick="startGame('spin')">Start Spin Demo</button>
-        <button class="play-btn" onclick="openHow()">How it works</button>
+      <div class="topbar">
+        <div class="owner-badge">Owner: Himanshu Yadav 💫</div>
+        <div class="credits">Balance: ₹<span id="balance">0</span></div>
+        <button class="ghost" id="resetBtn" title="Reset demo">Reset</button>
       </div>
-    </div>
-    <div style="width:320px">
-      <div class="card">
-        <h3>Featured Game: Lucky Spin</h3>
-        <p class="small">Spend 10 credits to spin. Win up to 100 credits. (Demo random)</p>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn" onclick="playSpin()">Play (10 cr)</button>
-          <button class="play-btn" onclick="showHistory()">History</button>
+    </header>
+
+    <div class="grid">
+      <!-- main -->
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Lucky Spin — Feel Like Real</strong>
+              <div class="small">Each spin costs <strong>₹10</strong>. Starting bonus: <strong>₹1000</strong>.</div>
+            </div>
+            <div class="small">Fair demo • Virtual only</div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1;min-width:260px">
+              <div class="wheel-wrap">
+                <div class="pointer" aria-hidden="true"></div>
+                <div class="wheel" id="wheel" aria-hidden="true">
+                  <div class="center">SPIN</div>
+                </div>
+                <div class="controls">
+                  <button class="btn" id="spinBtn">Spin ₹10</button>
+                  <button class="ghost" id="autoBtn">Auto x5</button>
+                  <button class="ghost" id="historyBtn">History</button>
+                </div>
+                <div class="muted">Last result: <span id="last">—</span></div>
+              </div>
+            </div>
+
+            <div style="width:320px;min-width:220px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="small">Leaderboard (local)</div>
+                  <div id="leaderboard" class="leaderboard"></div>
+                </div>
+                <div style="text-align:right">
+                  <div class="small">Best prize</div>
+                  <div id="best" style="font-weight:900">—</div>
+                </div>
+              </div>
+
+              <div class="muted" style="margin-top:10px">History (last 20):</div>
+              <div class="history-list card" id="history"></div>
+            </div>
+          </div>
+
+          <div id="output" style="margin-top:12px;color:var(--muted)"></div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>About</strong><div class="small">This gives a money-like experience using virtual balance only. No real money is moved.</div></div>
+            <div>
+              <input id="nameInput" class="input" placeholder="Your name (optional)" style="width:200px" />
+            </div>
+          </div>
+          <div class="muted" style="margin-top:8px">Tip: Press <strong>R</strong> to reset credits & history quickly during testing.</div>
+        </div>
+      </div>
+
+      <!-- sidebar -->
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Settings</strong></div>
+            <div class="small">Demo</div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="small">Spin cost (₹)</div>
+            <input id="costInput" class="input" value="10" />
+            <div style="height:8px"></div>
+            <div class="small">Auto-spin delay (ms)</div>
+            <input id="delayInput" class="input" value="800" />
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="saveSettings">Save</button>
+              <button class="ghost" id="resetLocal">Clear Local</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <div><strong>Quick actions</strong></div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-direction:column">
+            <button class="ghost" id="add1000">+₹1000 Bonus</button>
+            <button class="ghost" id="add500">+₹500 Bonus</button>
+            <button class="ghost" id="downloadLog">Download Log</button>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <section>
-    <div class="grid">
-      <div class="card">
-        <h3>Game — Lucky Spin</h3>
-        <p class="small">Chance-based demo. Uses virtual credits stored in your browser (localStorage).</p>
-      </div>
-      <div class="card">
-        <h3>Game — Trivia Challenge</h3>
-        <p class="small">Skill game demo placeholder — answer questions to win credits.</p>
-      </div>
-      <div class="card">
-        <h3>Game — Tournament</h3>
-        <p class="small">Demo bracket for skill-based tournaments (no real money).</p>
-      </div>
-    </div>
-  </section>
-
-  <div style="padding:22px" id="output"></div>
-
-  <div class="footer">
-    <div class="small">This is a demo. No real money transactions. For commercial/real-money operation you must obtain licenses and use compliant payment providers.</div>
+    <footer class="small">Demo only — virtual balance. Owner: Himanshu Yadav 💫</footer>
   </div>
 
 <script>
-  // Simple demo credit management (localStorage)
-  const creditsKey = 'bdg_demo_credits';
-  const historyKey = 'bdg_demo_history';
+  // Local keys
+  const balanceKey = 'vg_balance_himanshu';
+  const historyKey = 'vg_history_himanshu';
+  const leaderboardKey = 'vg_leaderboard_himanshu';
+  const START_BALANCE = 1000;
 
-  function getCredits(){ return parseInt(localStorage.getItem(creditsKey) || '50',10); } // start with 50 demo credits
-  function saveCredits(v){ localStorage.setItem(creditsKey,String(v)); document.getElementById('credits').innerText = v; }
-  function addHistory(text){ const h = JSON.parse(localStorage.getItem(historyKey) || '[]'); h.unshift({t:Date.now(),msg:text}); localStorage.setItem(historyKey, JSON.stringify(h)); }
+  // Helpers
+  function getBalance(){ return parseInt(localStorage.getItem(balanceKey) || START_BALANCE, 10); }
+  function saveBalance(v){ localStorage.setItem(balanceKey, String(v)); document.getElementById('balance').innerText = v; }
+  function addHistory(msg){ const h = JSON.parse(localStorage.getItem(historyKey) || '[]'); h.unshift({t:Date.now(), msg}); localStorage.setItem(historyKey, JSON.stringify(h)); renderHistory(); }
+  function getHistory(){ return JSON.parse(localStorage.getItem(historyKey) || '[]'); }
+  function saveLeaderboard(name, score){
+    if(!name) name = 'Player';
+    const l = JSON.parse(localStorage.getItem(leaderboardKey) || '[]');
+    l.push({name, score, t: Date.now()});
+    l.sort((a,b)=>b.score-a.score);
+    localStorage.setItem(leaderboardKey, JSON.stringify(l.slice(0,10)));
+    renderLeaderboard();
+  }
+  function getBest(){ const l = JSON.parse(localStorage.getItem(leaderboardKey) || '[]'); return l.length? l[0].score: null; }
 
-  // init
-  saveCredits(getCredits());
+  // init UI
+  saveBalance(getBalance());
+  renderHistory();
+  renderLeaderboard();
+  document.getElementById('best').innerText = getBest() ?? '—';
 
-  document.getElementById('buyBtn').addEventListener('click',function(){
-    // MOCK flow: open external payment page or popup. Replace '#' with your real payment checkout link from gateway.
-    // IMPORTANT: do NOT accept card details on GitHub Pages. Use a proper backend.
-    const checkoutUrl = '#'; // <-- replace with your checkout URL from Razorpay/Stripe/etc after legal checks
-    if(checkoutUrl === '#'){
-      alert('Demo: buy credits disabled. To accept payments you must integrate a licensed payment gateway and backend.');
-      return;
+  // Wheel & UI elements
+  const wheel = document.getElementById('wheel');
+  const lastEl = document.getElementById('last');
+  const outputEl = document.getElementById('output');
+  const spinBtn = document.getElementById('spinBtn');
+  const autoBtn = document.getElementById('autoBtn');
+
+  let spinning = false;
+  let autoRunning = false;
+
+  // Prize distribution
+  const sectors = [
+    { prize: 1000, weight: 0.002 }, // ultra rare big prize (feel like ₹)
+    { prize: 500, weight: 0.004 },
+    { prize: 200, weight: 0.01 },
+    { prize: 100, weight: 0.03 },
+    { prize: 50, weight: 0.07 },
+    { prize: 20, weight: 0.1 },
+    { prize: 10, weight: 0.15 },
+    { prize: 0, weight: 0.634 } // most likely
+  ];
+
+  function pickPrize(){
+    const r = Math.random();
+    let acc = 0;
+    for(const s of sectors){
+      acc += s.weight;
+      if(r <= acc) return s.prize;
     }
-    window.open(checkoutUrl, '_blank');
+    return sectors[sectors.length-1].prize;
+  }
+
+  // map prize to angle
+  const angles = {
+    1000: 10, 500: 50, 200: 100, 100: 150, 50: 200, 20: 250, 10: 300, 0: 340
+  };
+
+  function doSpin(isAuto=false){
+    if(spinning) return;
+    const cost = parseInt(document.getElementById('costInput').value || '10',10);
+    let bal = getBalance();
+    if(bal < cost){ alert('Balance kam hai — add bonus'); return; }
+    spinning = true;
+    // deduct immediately
+    bal -= cost;
+    saveBalance(bal);
+    spinBtn.disabled = true;
+
+    const prize = pickPrize();
+
+    // animate wheel
+    const baseTurns = 6 + Math.floor(Math.random()*4);
+    const ang = baseTurns*360 + (angles[prize] || 300) + (Math.random()*20-10);
+    wheel.style.transition = 'transform 4s cubic-bezier(.17,.67,.5,1)';
+    wheel.style.transform = rotate(${ang}deg);
+
+    setTimeout(()=>{
+      // award prize
+      let balNow = getBalance();
+      balNow += prize;
+      saveBalance(balNow);
+      const msg = prize ? Won ₹${prize} : 'No win';
+      lastEl.innerText = prize ? ₹${prize} : '—';
+      outputEl.innerText = ${new Date().toLocaleTimeString()} — ${msg};
+      addHistory(msg);
+
+      // update leaderboard for big wins
+      const name = document.getElementById('nameInput').value.trim() || 'Player';
+      if(prize >= 100) saveLeaderboard(name, prize);
+
+      spinning = false;
+      spinBtn.disabled = false;
+
+      // normalize rotation to avoid big numbers (keeps wheel state)
+      setTimeout(()=>{ wheel.style.transition = 'none'; wheel.style.transform = rotate(${ang % 360}deg); }, 50);
+
+      if(isAuto && autoRunning && getBalance() >= cost){
+        setTimeout(()=>{ if(!spinning) doSpin(true); }, parseInt(document.getElementById('delayInput').value || '800',10));
+      } else {
+        autoRunning = false;
+        autoBtn.innerText = 'Auto x5';
+      }
+    }, 4200);
+  }
+
+  // UI events
+  spinBtn.addEventListener('click', ()=> doSpin(false));
+
+  autoBtn.addEventListener('click', ()=>{
+    if(autoRunning){ autoRunning = false; autoBtn.innerText = 'Auto x5'; return; }
+    autoRunning = true; autoBtn.innerText = 'Stop';
+    let count = 0;
+    function nextAuto(){
+      if(!autoRunning || count >= 5){ autoRunning = false; autoBtn.innerText = 'Auto x5'; return; }
+      count++;
+      doSpin(true);
+      // next spin is scheduled from doSpin when ready
+    }
+    nextAuto();
   });
 
-  function playSpin(){
-    let c = getCredits();
-    if(c < 10){ alert('Not enough credits. Use Buy Credits (demo).'); return; }
-    c -= 10;
-    // demo random draw
-    const roll = Math.random();
-    let win = 0;
-    if(roll > 0.995){ win = 100; }      // tiny chance big win
-    else if(roll > 0.9){ win = 25; }
-    else if(roll > 0.6){ win = 5; }
-    else { win = 0; }
-    c += win;
-    saveCredits(c);
-    const msg = Spin result: rolled ${Math.floor(roll*1000)}/1000 — won ${win} credits.;
-    addHistory(msg);
-    document.getElementById('output').innerText = msg;
+  document.getElementById('historyBtn').addEventListener('click', ()=>{
+    const h = getHistory();
+    if(h.length === 0) { alert('Koi history nahi'); return; }
+    alert(h.slice(0,50).map(x=> ${new Date(x.t).toLocaleString()} — ${x.msg}).join('\\n'));
+  });
+
+  // history & leaderboard rendering
+  function renderHistory(){
+    const hx = getHistory();
+    const el = document.getElementById('history');
+    el.innerHTML = '';
+    if(hx.length === 0){ el.innerHTML = '<div class="small">No plays yet</div>'; return; }
+    hx.slice(0,20).forEach(item=>{
+      const d = new Date(item.t);
+      const row = document.createElement('div');
+      row.className = 'row small';
+      row.style.padding = '6px 0';
+      row.innerHTML = <div>${d.toLocaleString()}</div><div>${item.msg}</div>;
+      el.appendChild(row);
+    });
   }
 
-  function showHistory(){
-    const h = JSON.parse(localStorage.getItem(historyKey) || '[]');
-    if(h.length === 0){ alert('No history yet'); return; }
-    const html = h.slice(0,10).map(x=> new Date(x.t).toLocaleString() + ' — ' + x.msg).join('\\n');
-    alert(html);
+  function renderLeaderboard(){
+    const l = JSON.parse(localStorage.getItem(leaderboardKey) || '[]');
+    const el = document.getElementById('leaderboard');
+    el.innerHTML = '';
+    if(l.length === 0){ el.innerHTML = '<div class="small">No big wins yet</div>'; return; }
+    l.forEach((entry, i)=>{
+      const row = document.createElement('div');
+      row.className = 'small';
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.padding = '4px 0';
+      row.innerHTML = <div>${i+1}. ${entry.name}</div><div>₹${entry.score}</div>;
+      el.appendChild(row);
+    });
+    document.getElementById('best').innerText = l[0]?.score ?? '—';
   }
 
-  function startGame(type){
-    if(type==='spin') playSpin();
-  }
+  // quick actions
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    if(confirm('Reset demo balance & history?')){
+      localStorage.removeItem(balanceKey);
+      localStorage.removeItem(historyKey);
+      localStorage.removeItem(leaderboardKey);
+      saveBalance(getBalance());
+      renderHistory(); renderLeaderboard();
+      document.getElementById('last').innerText = '—';
+      document.getElementById('output').innerText = 'Reset done';
+    }
+  });
 
-  function openHow(){
-    alert('Demo site: virtual credits stored locally. For real payments you must: obtain licences, integrate a payment gateway, implement KYC & secure backend.');
-  }
+  document.getElementById('add1000').addEventListener('click', ()=>{
+    saveBalance(getBalance()+1000);
+    addHistory('Added ₹1000 bonus (dev)');
+  });
+  document.getElementById('add500').addEventListener('click', ()=>{
+    saveBalance(getBalance()+500);
+    addHistory('Added ₹500 bonus (dev)');
+  });
+
+  document.getElementById('downloadLog').addEventListener('click', ()=>{
+    const hx = getHistory();
+    const blob = new Blob([JSON.stringify(hx, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'spin_history.json'; a.click(); URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('saveSettings').addEventListener('click', ()=>{ alert('Settings saved.'); });
+
+  document.getElementById('resetLocal').addEventListener('click', ()=>{
+    if(confirm('Clear local storage? This removes balance, history, leaderboard.')){
+      localStorage.removeItem(balanceKey);
+      localStorage.removeItem(historyKey);
+      localStorage.removeItem(leaderboardKey);
+      saveBalance(getBalance()); renderHistory(); renderLeaderboard();
+    }
+  });
+
+  // keyboard shortcut
+  window.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase() === 'r'){
+      if(confirm('Reset demo?')){ localStorage.removeItem(balanceKey); localStorage.removeItem(historyKey); localStorage.removeItem(leaderboardKey); saveBalance(getBalance()); renderHistory(); renderLeaderboard(); }
+    }
+  });
+
+  // initial render functions
+  function renderLeaderboard(){ /* defined earlier */ }
+  // call render functions
+  renderHistory();
+  renderLeaderboard();
+
 </script>
 </body>
 </html>
